@@ -5,8 +5,7 @@ var app = express.createServer(express.logger());
 var fs = require('fs');
 
 app.get('/', function(request, response) {
-//  var buffer = new Buffer(fs.readFileSync('index.html'));
-  var buffer = new Buffer("I'm a string!", "utf-8")
+  var buffer = new Buffer(fs.readFileSync('index.html'));
   response.send(buffer.toString());
 });
 
