@@ -72,18 +72,6 @@ var checkHtmlText = function(htmlText, checksfile) {
     return out;
 };
 
-var getHtmlText = function(result, response) {
-    if (result instanceof Error) {
-        console.error('Error: ' + util.format(response.message));
-        this.retry(1000);
-    } else {
-//        sys.puts(result);
-        var checkJson = checkHtmlText(result, program.checks);
-        var outJson = JSON.stringify(checkJson, null, 4);
-        console.log(outJson);
-    }
-}
-
 var clone = function(fn) {
     // Workaround for commander.js issue.
     // http://stackoverflow.com/a/6772648
@@ -100,7 +88,17 @@ if(require.main == module) {
 
     
     if (program.url) {
-        rest.get(program.url).on('complete', getHtmlText);
+        rest.get(program.url).on('complete', function(result, response) {
+                if (result instanceof Error) {
+                    console.error('Error: ' + util.format(response.message));
+                    this.retry(1000);
+                } else {
+                    //        sys.puts(result);
+                    var checkJson = checkHtmlText(result, program.checks);
+                    var outJson = JSON.stringify(checkJson, null, 4);
+                    console.log(outJson);
+                }
+            });
     }
     else {
         var checkJson = checkHtmlFile(program.file, program.checks);
